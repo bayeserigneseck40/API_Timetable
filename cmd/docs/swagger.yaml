@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: Documentation de l'API Timetable et Config.
+  title: API Timetable & Config
+  version: "1.0"
+paths: {}
+swagger: "2.0"
