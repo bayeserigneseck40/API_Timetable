@@ -37,7 +37,24 @@ func initDB() {
 	}
 }
 
-func storeOrUpdateEvent(event Event) error {
+func publishModifiedEvent(js jetstream.JetStream, event Event) error {
+	// Sérialiser l'événement en JSON
+	eventData, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("erreur de sérialisation JSON : %v", err)
+	}
+
+	// Publier sur le sujet "ALERTS.modified"
+	_, err = js.Publish(context.Background(), "ALERTS.modified", eventData)
+	if err != nil {
+		return fmt.Errorf("erreur de publication sur NATS : %v", err)
+	}
+
+	log.Println("📢 Événement modifié publié :", event.UID)
+	return nil
+}
+
+func storeOrUpdateEvent(event Event, js jetstream.JetStream) error {
 	event.ID = uuid.New()
 	resourceIdStr := strings.Join(event.ResourceId, ",")
 	var existingID string
@@ -55,13 +72,15 @@ func storeOrUpdateEvent(event Event) error {
 			return err
 		}
 		fmt.Println("✏️  Événement mis à jour !")
+		// 📢 Publier l'événement modifié
+		err = publishModifiedEvent(js, event)
 	} else {
 		return err
 	}
 	return nil
 }
 
-func processMessage(msg jetstream.Msg) {
+func processMessage(msg jetstream.Msg, js jetstream.JetStream) {
 	log.Printf("Message reçu: %s", string(msg.Data())) // ✅ Ajout du log
 
 	var event Event
@@ -70,7 +89,7 @@ func processMessage(msg jetstream.Msg) {
 		return
 	}
 
-	if err := storeOrUpdateEvent(event); err != nil {
+	if err := storeOrUpdateEvent(event, js); err != nil {
 		log.Printf("Erreur lors de l'insertion/mise à jour : %v", err)
 	} else {
 		msg.Ack()
@@ -113,7 +132,9 @@ func main() {
 		log.Fatalf("Erreur lors de la création du consumer : %v", err)
 	}
 
-	sub, err := consumer.Consume(processMessage)
+	sub, err := consumer.Consume(func(msg jetstream.Msg) {
+		processMessage(msg, js)
+	})
 	if err != nil {
 		log.Fatalf("Erreur lors de la consommation des messages : %v", err)
 	}

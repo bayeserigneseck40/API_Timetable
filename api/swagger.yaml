@@ -1,0 +1,84 @@
+basePath: /
+definitions:
+  models.Event:
+    properties:
+      description:
+        type: string
+      dtend:
+        type: string
+      dtstart:
+        type: string
+      id:
+        type: string
+      location:
+        type: string
+      resource_id:
+        type: string
+      summary:
+        type: string
+      uid:
+        type: string
+    type: object
+info:
+  contact:
+    email: Baye_Serigne.SECK@etu.uca.fr
+    name: Baye serigne Seck.
+  description: API to manage Event.
+  title: middleware/project
+  version: 1.0.0
+paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Récupère la liste complète des événements disponibles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+        "500":
+          description: Erreur lors de la récupération des événements
+          schema:
+            type: string
+      summary: Récupère tous les événements
+      tags:
+      - Events
+  /events/resource/{resource_id}:
+    get:
+      consumes:
+      - application/json
+      description: Récupère les événements associés à une ressource spécifique
+      parameters:
+      - description: ID de la ressource
+        in: path
+        name: resource_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+        "400":
+          description: ID invalide
+          schema:
+            type: string
+        "500":
+          description: Erreur lors de la récupération des événements
+          schema:
+            type: string
+      summary: Récupère les événements d'une ressource
+      tags:
+      - Events
+schemes:
+- http
+swagger: "2.0"

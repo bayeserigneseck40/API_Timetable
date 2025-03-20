@@ -13,16 +13,15 @@ type EventController struct {
 	Service *services.EventService
 }
 
-// GetAllEventsHandler retourne tous les événements.
-// GetEvents
-// @Tags         events
-// @Summary      Get a event.
-// @Description  Get a event.
-// @Param        id           	path      string  true  "Event UUID formatted ID"
-// @Success      200            {object}  models.Event
-// @Failure      422            "Cannot parse id"
-// @Failure      500            "Something went wrong"
-// @Router       /events/ [get]
+// GetAllEventsHandler retourne tous les événements
+// @Summary Récupère tous les événements
+// @Description Récupère la liste complète des événements disponibles
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Event
+// @Failure 500 {string} string "Erreur lors de la récupération des événements"
+// @Router /events [get]
 func (c *EventController) GetAllEventsHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := c.Service.GetAllEvents()
 	if err != nil {
@@ -33,7 +32,17 @@ func (c *EventController) GetAllEventsHandler(w http.ResponseWriter, r *http.Req
 	json.NewEncoder(w).Encode(events)
 }
 
-// GetEventsByResourceHandler retourne les événements d'une resource donnée.
+// GetEventsByResourceHandler retourne les événements d'une ressource donnée
+// @Summary Récupère les événements d'une ressource
+// @Description Récupère les événements associés à une ressource spécifique
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param resource_id path string true "ID de la ressource"
+// @Success 200 {array} models.Event
+// @Failure 400 {string} string "ID invalide"
+// @Failure 500 {string} string "Erreur lors de la récupération des événements"
+// @Router /events/resource/{resource_id} [get]
 func (c *EventController) GetEventsByResourceHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	resourceID, err := uuid.Parse(vars["resource_id"])
