@@ -110,7 +110,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// ✅ Création du stream s'il n'existe pas
+	// Création du stream s'il n'existe pas
 	_, err = js.CreateStream(ctx, jetstream.StreamConfig{
 		Name:     "USERS",
 		Subjects: []string{"USERS.*"},
