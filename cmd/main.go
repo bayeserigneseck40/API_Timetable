@@ -7,7 +7,7 @@ import (
 	"API_timetable/internal/services"
 	"github.com/gorilla/mux"
 	"log"
-	"net/http"
+	"net/http" // Also, you can try interactive lessons for GoLand by selecting 'Help | Learn IDE Features' from the main menu.
 )
 
 // @title API Timetable & Config
@@ -35,5 +35,3 @@ func main() {
 	log.Println("🚀 Serveur Timetable en écoute sur http://localhost:8081")
 	log.Fatal(http.ListenAndServe(":8081", router))
 }
-
-// Also, you can try interactive lessons for GoLand by selecting 'Help | Learn IDE Features' from the main menu.

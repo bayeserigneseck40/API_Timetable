@@ -45,6 +45,6 @@ CREATE TABLE IF NOT EXISTS events (
 		return err
 	}
 
-	fmt.Println("✅ Base de données et tables créées avec succès !")
+	fmt.Println(" Base de données et tables créées avec succès !")
 	return nil
 }
